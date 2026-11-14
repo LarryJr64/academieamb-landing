@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AMB Académie — Reprends le contrôle avec un métier digital | La vidéo</title>
-<meta name="description" content="8 minutes pour comprendre le métier, la méthode et l’accompagnement. Puis un appel découverte gratuit pour voir si l’Académie te correspond.">
+<meta name="description" content="6 minutes pour comprendre le métier, la méthode et l’accompagnement. Puis un appel découverte gratuit pour voir si l’Académie te correspond.">
 <meta property="og:title" content="AMB Académie — Reprends le contrôle avec un métier digital">
-<meta property="og:description" content="8 minutes pour comprendre le métier, puis un appel découverte gratuit de 45 minutes.">
-<meta property="og:image" content="https://img.youtube.com/vi/zFbwChQ45Cw/maxresdefault.jpg">
+<meta property="og:description" content="6 minutes pour comprendre le métier, puis un appel découverte gratuit de 45 minutes.">
+<meta property="og:image" content="https://academieamb.com/vsl.jpg">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -235,7 +235,7 @@ footer p+p{margin-top:8px}
     <div class="video-frame">
       <div class="video-box" id="vbox">
         <div class="poster" id="poster" role="button" tabindex="0" aria-label="Lancer la vidéo">
-          <span class="play"></span><span class="dur">8 min</span>
+          <span class="play"></span><span class="dur">6 min</span>
         </div>
       </div>
     </div>
@@ -459,8 +459,10 @@ footer p+p{margin-top:8px}
 /* ============ CONFIGURATION ============ */
 var CFG = {
   CALENDLY_URL: 'https://calendly.com/lesambitieuses/as',   // ← lien de l’événement Calendly
-  PIXEL_ID: '',                                              // ← ID du pixel Meta (vide = désactivé)
-  VIDEO_ID: 'zFbwChQ45Cw',                                   // ← ID YouTube de la VSL (à remplacer par la VSL de 8 min)
+  PIXEL_ID: '955572904130075',                               // ← ID du pixel Meta de Sarah (vide = désactivé)
+  VIDEO_SRC: 'vsl.mp4',                                      // ← VSL hébergée dans le dépôt (1080p, < 100 Mo pour GitHub)
+  VIDEO_POSTER: 'vsl.jpg',
+  UNLOCK_AT: 360,                                            // ← secondes de vidéo avant de débloquer la réservation (6 min)
   STUDENTS: '70',                                            // ← nombre d’élèves, affiché « +70 » (à aligner partout)
   INSTAGRAM_URL: 'https://www.instagram.com/sarah.nmdsoul',
   PRICE_CHANGE_DATE: '2026-11-09T00:00:00+01:00',            // ← date des nouveaux tarifs
@@ -569,32 +571,28 @@ function unlock(scroll){
   $('#reserver').hidden=false;
   $('#s3a').classList.remove('on'); $('#s3b').classList.add('on');
   track('ViewContent',{content_name:'video_complete'}); trackC('VideoComplete');
-  setTimeout(function(){ $('#reserver').scrollIntoView({behavior:'smooth',block:'start'}); },700);
+  if(scroll) setTimeout(function(){ $('#reserver').scrollIntoView({behavior:'smooth',block:'start'}); },700);
 }
 (function(){
-  var poster=$('#poster'), box=$('#vbox'), started=false, player=null;
-  poster.style.backgroundImage='url(https://img.youtube.com/vi/'+CFG.VIDEO_ID+'/maxresdefault.jpg)';
-  function loadApi(cb){
-    if(window.YT&&YT.Player){cb();return}
-    var prev=window.onYouTubeIframeAPIReady;
-    window.onYouTubeIframeAPIReady=function(){ if(prev)prev(); cb(); };
-    var s=document.createElement('script'); s.src='https://www.youtube.com/iframe_api'; document.head.appendChild(s);
-  }
+  var poster=$('#poster'), box=$('#vbox'), started=false;
+  poster.style.backgroundImage='url('+CFG.VIDEO_POSTER+')';
   function play(){
     if(started) return; started=true;
-    var f=document.createElement('iframe'); f.id='ytf';
-    var origin=(location.protocol==='http:'||location.protocol==='https:')?'&origin='+encodeURIComponent(location.origin):'';
-    f.src='https://www.youtube-nocookie.com/embed/'+CFG.VIDEO_ID+'?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1'+origin;
-    f.title='AMB Académie — le métier de setteuse et d’assistante virtuelle';
-    f.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'; f.allowFullscreen=true;
-    box.innerHTML=''; box.appendChild(f);
+    var v=document.createElement('video');
+    v.src=CFG.VIDEO_SRC; v.poster=CFG.VIDEO_POSTER; v.controls=true; v.autoplay=true; v.playsInline=true;
+    v.setAttribute('aria-label','AMB Académie — le métier de setteuse et d’assistante virtuelle');
+    v.style.cssText='position:absolute;inset:0;width:100%;height:100%;background:#000';
+    // à 6 min : on débloque sans faire défiler (la vidéo tourne encore) ; à la fin : on descend au formulaire
+    v.addEventListener('timeupdate',function(){ if(!unlocked && v.currentTime>=CFG.UNLOCK_AT) unlock(false); });
+    v.addEventListener('ended',function(){ unlock(true); });
+    box.innerHTML=''; box.appendChild(v);
+    var p=v.play(); if(p&&p.catch) p.catch(function(){}); // autoplay refusé : les contrôles restent là
     track('ViewContent',{content_name:'video_play'}); trackC('VideoPlay');
-    loadApi(function(){ player=new YT.Player('ytf',{events:{onStateChange:function(e){ if(e.data===0) unlock(true); }}}); });
   }
   poster.addEventListener('click',play);
   poster.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();play()}});
   $('#seen').addEventListener('click',function(e){e.preventDefault();trackC('VideoSkip');unlock(true)});
-  if(location.hash==='#reserver'||/[?&]vu=1/.test(location.search)) unlock(false);
+  if(location.hash==='#reserver'||/[?&]vu=1/.test(location.search)) unlock(true);
 })();
 
 $$('[data-cta]').forEach(function(a){a.addEventListener('click',function(){trackC('CTAClick',{position:a.getAttribute('data-cta')})})});

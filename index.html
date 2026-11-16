@@ -460,7 +460,7 @@ footer p+p{margin-top:8px}
 var CFG = {
   CALENDLY_URL: 'https://calendly.com/lesambitieuses/as',   // ← lien de l’événement Calendly
   PIXEL_ID: '955572904130075',                               // ← ID du pixel Meta de Sarah (vide = désactivé)
-  GA_ID: '',                                                 // ← ID Google Analytics 4, format G-XXXXXXXXXX (vide = désactivé)
+  GTM_ID: '',                                                // ← ID du conteneur Google Tag Manager, format GTM-XXXXXXX (vide = désactivé)
   VIDEO_SRC: 'vsl.mp4',                                      // ← VSL hébergée dans le dépôt (1080p, < 100 Mo pour GitHub)
   VIDEO_POSTER: 'vsl.jpg',
   UNLOCK_AT: 360,                                            // ← secondes de vidéo avant de débloquer la réservation (6 min)
@@ -485,16 +485,20 @@ var CFG = {
   !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
   fbq('init',CFG.PIXEL_ID);fbq('track','PageView');
 })();
-/* ============ Google Analytics 4 (facultatif) ============ */
+/* ============ Google Tag Manager (facultatif) ============ */
+/* GTM charge GA4 et les autres balises. Les conversions passent par dataLayer. */
+window.dataLayer=window.dataLayer||[];
 (function(){
-  if(!CFG.GA_ID) return;
-  var g=document.createElement('script'); g.async=true; g.src='https://www.googletagmanager.com/gtag/js?id='+CFG.GA_ID; document.head.appendChild(g);
-  window.dataLayer=window.dataLayer||[]; window.gtag=function(){dataLayer.push(arguments)};
-  gtag('js',new Date()); gtag('config',CFG.GA_ID);
+  if(!CFG.GTM_ID) return;
+  dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+  var g=document.createElement('script'); g.async=true; g.src='https://www.googletagmanager.com/gtm.js?id='+CFG.GTM_ID; document.head.appendChild(g);
+  var ns=document.createElement('noscript'); var f=document.createElement('iframe');
+  f.src='https://www.googletagmanager.com/ns.html?id='+CFG.GTM_ID; f.height='0'; f.width='0'; f.style.display='none'; f.style.visibility='hidden';
+  ns.appendChild(f); document.body.insertBefore(ns,document.body.firstChild);
 })();
-/* Mêmes conversions côté Meta et côté GA4 */
+/* Mêmes conversions côté Meta et côté GTM (noms GA4 recommandés) */
 var GA_EVENTS={Lead:'generate_lead',Schedule:'schedule'};
-function gaSend(n,d){ try{ if(window.gtag) gtag('event',GA_EVENTS[n]||n,d||{}); }catch(e){} }
+function gaSend(n,d){ try{ dataLayer.push(Object.assign({event:GA_EVENTS[n]||n},d||{})); }catch(e){} }
 function track(n,d){ try{ if(window.fbq) fbq('track',n,d||{}); }catch(e){} gaSend(n,d); }
 function trackC(n,d){ try{ if(window.fbq) fbq('trackCustom',n,d||{}); }catch(e){} gaSend(n,d); }
 var $=function(s,c){return (c||document).querySelector(s)}, $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};

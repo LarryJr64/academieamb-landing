@@ -524,6 +524,8 @@ function openLight(src,label){
   document.addEventListener('keydown',esc);
   document.body.appendChild(box); $('button',box).focus();
   var p=vid.play(); if(p&&p.catch) p.catch(function(){});
+  // Téléphone : l'appel Zoom est très large, on passe en plein écran (sinon ~100 px de haut). Échec silencieux : la superposition reste.
+  if(window.innerWidth<700){ try{ if(vid.requestFullscreen) vid.requestFullscreen().catch(function(){}); else if(vid.webkitEnterFullscreen) vid.webkitEnterFullscreen(); }catch(e){} }
 }
 (function(){
   var box=$('#vids'), wrap=$('#vidsWrap');

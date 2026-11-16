@@ -80,7 +80,8 @@ header .btn{padding:12px 24px;font-size:15px}
 .after-video .open{display:none}
 body.unlocked .after-video .lock{display:none}
 body.unlocked .after-video .open{display:block}
-.seen{display:inline-block;margin-top:12px;font-size:13.5px;color:var(--rasp-d)}
+.cd{display:inline-block;margin-top:12px;padding:6px 14px;border-radius:999px;background:var(--wine-d);color:#fff;font-size:13.5px;font-variant-numeric:tabular-nums}
+.cd b{color:#fff}
 
 /* Sarah */
 .story{background:var(--white)}
@@ -127,7 +128,10 @@ body.unlocked .after-video .open{display:block}
 .row p{font-size:16px}
 .pcard q{font-family:var(--serif);font-size:21px;font-style:italic;line-height:1.3;color:var(--ink);quotes:"« " " »"}
 .wall img{height:380px;width:auto;border-radius:18px;box-shadow:0 14px 30px -22px rgba(74,26,44,.6);border:1px solid var(--line);background:#fff}
-.vcard{position:relative;aspect-ratio:9/16;width:min(240px,66vw);border-radius:var(--r);overflow:hidden;background:var(--wine-d);box-shadow:0 18px 40px -24px rgba(74,26,44,.7)}
+.vlight{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:16px;background:rgba(20,12,16,.88)}
+.vlight video{width:min(1100px,100%);max-height:86vh;border-radius:14px;background:#000}
+.vlight button{position:absolute;top:14px;right:14px;width:44px;height:44px;border:0;border-radius:50%;background:#fff;color:var(--wine-d);font-size:26px;line-height:1;cursor:pointer}
+.vcard{position:relative;aspect-ratio:9/16;width:min(250px,62vw);border-radius:var(--r);overflow:hidden;background:var(--wine-d);box-shadow:0 18px 40px -24px rgba(74,26,44,.7)}
 .vcard .vp,.vcard iframe,.vcard video{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover}
 .vcard .vp{display:grid;place-items:center;cursor:pointer;background:center/cover no-repeat,linear-gradient(160deg,var(--frame-a),var(--wine))}
 .vcard.slot .vp{cursor:default}
@@ -241,7 +245,7 @@ footer p+p{margin-top:8px}
     </div>
 
     <div class="after-video">
-      <p class="lock"><strong>Regarde jusqu’au bout :</strong> je t’explique aussi comment savoir si l’Académie correspond à ton projet. Le formulaire de réservation s’ouvre ensuite.<br><a class="seen" href="#reserver" id="seen">Je l’ai déjà vue →</a></p>
+      <p class="lock"><strong>Regarde la vidéo :</strong> je t’explique aussi comment savoir si l’Académie correspond à ton projet. La réservation s’ouvre après 6 minutes de visionnage.<br><span class="cd" id="cd" aria-live="polite">Réservation disponible dans <b id="cdt">6:00</b></span></p>
       <div class="open">
         <a class="btn" href="#reserver" data-cta="hero">Réserver mon appel gratuit <span aria-hidden="true">→</span></a>
         <p class="micro" style="margin-top:14px">Gratuit · 45 minutes · sans engagement</p>
@@ -267,6 +271,7 @@ footer p+p{margin-top:8px}
         <div class="stat"><b>5 h/j</b><span>de travail, au maximum</span></div>
       </div>
       <p class="micro" style="margin-top:14px">Mon parcours est le mien. Ce n’est ni un résultat type, ni un résultat garanti pour mes élèves.</p>
+      <p class="rv" style="margin-top:14px"><a href="https://www.instagram.com/sarah.nmdsoul/" target="_blank" rel="noopener" data-cta="sarah-insta" style="color:var(--rasp-d);font-weight:600">Suis-moi sur Instagram · @sarah.nmdsoul →</a></p>
     </div>
   </div>
 </section>
@@ -353,7 +358,7 @@ footer p+p{margin-top:8px}
           <div class="f" data-f="prenom"><label for="prenom">Prénom</label><input type="text" id="prenom" name="prenom" autocomplete="given-name" required><span class="err">Dis-nous comment t’appeler.</span></div>
           <div class="f" data-f="nom"><label for="nom">Nom</label><input type="text" id="nom" name="nom" autocomplete="family-name" required><span class="err">Ton nom, s’il te plaît.</span></div>
           <div class="f" data-f="email"><label for="email">Mail</label><input type="email" id="email" name="email" autocomplete="email" required><span class="err">Vérifie ton adresse e-mail.</span></div>
-          <div class="f" data-f="tel"><label for="tel">WhatsApp <span class="hint2">(nous reviendrons vers toi pour confirmer le rendez-vous)</span></label><input type="tel" id="tel" name="tel" autocomplete="tel" inputmode="tel" placeholder="06 12 34 56 78" required><span class="err">Un numéro valide, s’il te plaît.</span></div>
+          <div class="f" data-f="tel"><label for="tel">WhatsApp</label><input type="tel" id="tel" name="tel" autocomplete="tel" inputmode="tel" placeholder="06 12 34 56 78" required aria-describedby="telh"><span class="hint2" id="telh">Nous reviendrons vers toi pour confirmer le rendez-vous.</span><span class="err">Un numéro valide, s’il te plaît.</span></div>
 
           <div class="f full" data-f="situation"><span class="legend">Où en es-tu actuellement ?</span>
             <div class="radio">
@@ -399,7 +404,7 @@ footer p+p{margin-top:8px}
         <div class="soft">
           <h3>Merci pour ta franchise 🤍</h3>
           <p style="color:#5a444a;max-width:520px;margin:0 auto 18px">Ces appels sont réservés aux femmes qui se sentent prêtes à avancer. Ce n’est pas un « non » : suis-moi sur Instagram, prends le temps de comprendre le métier, et reviens quand le moment sera le bon.</p>
-          <a class="btn" href="https://www.instagram.com/sarah.nmdsoul" target="_blank" rel="noopener" data-cta="notready-insta">Me suivre sur Instagram</a>
+          <a class="btn" href="https://www.instagram.com/sarah.nmdsoul/" target="_blank" rel="noopener" data-cta="notready-insta">Me suivre sur Instagram</a>
           <p class="micro" style="margin-top:14px"><a href="#" id="back1">← Modifier mes réponses</a></p>
         </div>
       </div>
@@ -447,7 +452,7 @@ footer p+p{margin-top:8px}
 
 <footer>
   <div class="wrap">
-    <p>© 2026 AMB Académie — Les Ambitieuses · Solara Digital LLC</p>
+    <p>© 2026 AMB Académie — Les Ambitieuses · Solara Digital LLC · <a href="https://www.instagram.com/sarah.nmdsoul/" target="_blank" rel="noopener" data-cta="footer-insta">Instagram</a></p>
     <p><a href="https://academieamb.vercel.app/mentions-legales.html">Mentions légales</a> · <a href="https://academieamb.vercel.app/cgv.html">Conditions générales de vente</a> · <a href="https://academieamb.vercel.app/politique-confidentialite.html">Politique de confidentialité</a></p>
     <p>Aucun résultat n’est garanti : les parcours dépendent de l’implication, de la régularité et de la situation de chacune.</p>
   </div>
@@ -468,9 +473,15 @@ var CFG = {
   PRICE_CHANGE_DATE: '2026-11-09T00:00:00+01:00',            // ← date des nouveaux tarifs
   FLASH_ACTIVE: false,                                       // ← true pendant le flash Black Friday
   FLASH_END_TEXT: 'samedi 28 novembre, minuit',
-  /* Témoignages vidéo (verticaux, ~10 s, avec accord, SANS montant).
+  /* Témoignages vidéo (horizontaux, avec accord, SANS montant).
      { youtube:'ID', name:'Prénom', caption:'Sa première étape' }  ou  { mp4:'https://…', poster:'https://…', name:'Prénom', caption:'…' } */
-  VIDEO_TESTIMONIALS: [],
+  VIDEO_TESTIMONIALS: [
+    { mp4:'temoignages/jenna.mp4',   poster:'temoignages/jenna.jpg',   name:'Jenna',   caption:'Élève de l’Académie · 3 min' },
+    { mp4:'temoignages/sidonie.mp4', poster:'temoignages/sidonie.jpg', name:'Sidonie', caption:'Élève de l’Académie · 3 min' },
+    { mp4:'temoignages/flavie.mp4',  poster:'temoignages/flavie.jpg',  name:'Flavie',  caption:'Élève de l’Académie · 4 min' },
+    { mp4:'temoignages/maelle.mp4',  poster:'temoignages/maelle.jpg',  name:'Maëlle',  caption:'Élève de l’Académie · 5 min' },
+    { mp4:'temoignages/eva.mp4',     poster:'temoignages/eva.jpg',     name:'Eva',     caption:'Élève de l’Académie · 6 min' }
+  ],
   VIDEO_SLOTS_PREVIEW: true,   // true = 3 emplacements visibles tant qu’il n’y a pas de vidéos ; false = section masquée
   /* Captures de messages d’élèves : images SANS montants (floute ou recadre les chiffres) */
   PROOF_IMAGES: [
@@ -500,6 +511,19 @@ function carousel(id){
 }
 
 /* ============ Témoignages vidéo ============ */
+// Les témoignages sont des appels Zoom très larges : on les lit en grand, par-dessus la page.
+function openLight(src,label){
+  var box=document.createElement('div'); box.className='vlight'; box.setAttribute('role','dialog'); box.setAttribute('aria-modal','true'); box.setAttribute('aria-label',label);
+  box.innerHTML='<button type="button" aria-label="Fermer">×</button><video controls autoplay playsinline></video>';
+  var vid=$('video',box), prev=document.activeElement; vid.src=src;
+  function close(){ vid.pause(); box.remove(); document.removeEventListener('keydown',esc); if(prev&&prev.focus) prev.focus(); }
+  function esc(e){ if(e.key==='Escape') close(); }
+  $('button',box).addEventListener('click',close);
+  box.addEventListener('click',function(e){ if(e.target===box) close(); });
+  document.addEventListener('keydown',esc);
+  document.body.appendChild(box); $('button',box).focus();
+  var p=vid.play(); if(p&&p.catch) p.catch(function(){});
+}
 (function(){
   var box=$('#vids'), wrap=$('#vidsWrap');
   if(!CFG.VIDEO_TESTIMONIALS.length){
@@ -516,7 +540,7 @@ function carousel(id){
       c.innerHTML='<div class="vp" role="button" tabindex="0" aria-label="Lancer le témoignage de '+(v.name||'une élève')+'" style="background-image:url('+poster+')"><span class="play"></span><b>'+(v.name||'')+'<small>'+(v.caption||'')+'</small></b></div>';
       var vp=c.firstChild;
       function go(){
-        if(v.mp4){var m=document.createElement('video');m.src=v.mp4;m.controls=true;m.autoplay=true;m.playsInline=true;c.innerHTML='';c.appendChild(m);}
+        if(v.mp4){ openLight(v.mp4, 'Témoignage de '+(v.name||'une élève')); }
         else{var f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+v.youtube+'?autoplay=1&rel=0&modestbranding=1&playsinline=1';f.title='Témoignage de '+(v.name||'une élève');f.allow='autoplay; encrypted-media; picture-in-picture';f.allowFullscreen=true;c.innerHTML='';c.appendChild(f);}
         trackC('TestimonialPlay',{name:v.name||''});
       }
@@ -565,12 +589,13 @@ carousel('#carCards');
 
 /* ============ Vidéo : le formulaire s’ouvre à la fin ============ */
 var unlocked=false;
-function unlock(scroll){
+function unlock(scroll,silent){
   if(unlocked){ if(scroll) $('#reserver').scrollIntoView({behavior:'smooth',block:'start'}); return; }
   unlocked=true; document.body.classList.add('unlocked');
+  try{ localStorage.setItem('amb_vu','1'); }catch(e){} // elle revient plus tard : pas besoin de revoir la vidéo
   $('#reserver').hidden=false;
   $('#s3a').classList.remove('on'); $('#s3b').classList.add('on');
-  track('ViewContent',{content_name:'video_complete'}); trackC('VideoComplete');
+  if(!silent){ track('ViewContent',{content_name:'video_complete'}); trackC('VideoComplete'); }
   if(scroll) setTimeout(function(){ $('#reserver').scrollIntoView({behavior:'smooth',block:'start'}); },700);
 }
 (function(){
@@ -582,17 +607,26 @@ function unlock(scroll){
     v.src=CFG.VIDEO_SRC; v.poster=CFG.VIDEO_POSTER; v.controls=true; v.autoplay=true; v.playsInline=true;
     v.setAttribute('aria-label','AMB Académie — le métier de setteuse et d’assistante virtuelle');
     v.style.cssText='position:absolute;inset:0;width:100%;height:100%;background:#000';
-    // à 6 min : on débloque sans faire défiler (la vidéo tourne encore) ; à la fin : on descend au formulaire
-    v.addEventListener('timeupdate',function(){ if(!unlocked && v.currentTime>=CFG.UNLOCK_AT) unlock(false); });
-    v.addEventListener('ended',function(){ unlock(true); });
+    // On compte le temps réellement regardé : avancer dans la barre ne compte pas.
+    var watched=0, last=0, cdt=$('#cdt');
+    function fmt(s){ s=Math.max(0,Math.ceil(s)); return Math.floor(s/60)+':'+('0'+s%60).slice(-2); }
+    v.addEventListener('timeupdate',function(){
+      var d=v.currentTime-last; last=v.currentTime;
+      if(d>0 && d<1.5) watched+=d;  // saut (d ≥ 1,5 s) ou retour arrière (d < 0) : ignoré
+      cdt.textContent=fmt(CFG.UNLOCK_AT-watched);
+      if(!unlocked && watched>=CFG.UNLOCK_AT) unlock(false); // la vidéo tourne encore : pas de défilement
+    });
+    v.addEventListener('seeked',function(){ last=v.currentTime; });
+    v.addEventListener('ratechange',function(){ if(v.playbackRate>1) v.playbackRate=1; }); // pas d'accéléré
+    v.addEventListener('ended',function(){ if(unlocked) unlock(true); });
     box.innerHTML=''; box.appendChild(v);
     var p=v.play(); if(p&&p.catch) p.catch(function(){}); // autoplay refusé : les contrôles restent là
     track('ViewContent',{content_name:'video_play'}); trackC('VideoPlay');
   }
   poster.addEventListener('click',play);
   poster.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();play()}});
-  $('#seen').addEventListener('click',function(e){e.preventDefault();trackC('VideoSkip');unlock(true)});
-  if(location.hash==='#reserver'||/[?&]vu=1/.test(location.search)) unlock(true);
+  var seen=false; try{ seen=localStorage.getItem('amb_vu')==='1'; }catch(e){}
+  if(seen) unlock(false,true); // déjà regardée sur ce navigateur : pas besoin de la revoir
 })();
 
 $$('[data-cta]').forEach(function(a){a.addEventListener('click',function(){trackC('CTAClick',{position:a.getAttribute('data-cta')})})});

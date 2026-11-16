@@ -683,8 +683,8 @@ function e164(t){var d=String(t||'').replace(/[^\d+]/g,'');if(d.indexOf('+')===0
     e.preventDefault();
     if(!validate()) return;
     var d=val('demarrer');
-    track('Lead',{content_name:'qualification',status:d});
     if(d==='Je me renseigne encore'){ trackC('NotReady'); show('pnot'); return; }
+    track('Lead',{content_name:'qualification',status:d}); // seulement les profils prêts : Meta optimise sur cet événement
     show('ppres');
   });
   $('#back1').addEventListener('click',function(e){e.preventDefault();show('p1')});

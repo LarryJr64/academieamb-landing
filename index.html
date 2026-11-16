@@ -610,17 +610,20 @@ function unlock(scroll,silent){
     v.src=CFG.VIDEO_SRC; v.poster=CFG.VIDEO_POSTER; v.controls=true; v.autoplay=true; v.playsInline=true;
     v.setAttribute('aria-label','AMB Académie — le métier de setteuse et d’assistante virtuelle');
     v.style.cssText='position:absolute;inset:0;width:100%;height:100%;background:#000';
-    // On compte le temps réellement regardé : avancer dans la barre ne compte pas.
-    var watched=0, last=0, cdt=$('#cdt');
+    // On compte les minutes de vidéo réellement lues (en accéléré aussi : à ×2, 6 min de vidéo = 3 min) ;
+    // avancer dans la barre ne compte pas.
+    var watched=0, last=0, seeking=false, cdt=$('#cdt');
     function fmt(s){ s=Math.max(0,Math.ceil(s)); return Math.floor(s/60)+':'+('0'+s%60).slice(-2); }
     v.addEventListener('timeupdate',function(){
       var d=v.currentTime-last; last=v.currentTime;
-      if(d>0 && d<1.5) watched+=d;  // saut (d ≥ 1,5 s) ou retour arrière (d < 0) : ignoré
+      // pendant un saut : ignoré ; sinon un pas de lecture normal reste petit, même à ×2
+      if(!seeking && !v.seeking && d>0 && d<1+1.5*v.playbackRate) watched+=d;
       cdt.textContent=fmt(CFG.UNLOCK_AT-watched);
       if(!unlocked && watched>=CFG.UNLOCK_AT) unlock(false); // la vidéo tourne encore : pas de défilement
     });
-    v.addEventListener('seeked',function(){ last=v.currentTime; });
-    v.addEventListener('ratechange',function(){ if(v.playbackRate>1) v.playbackRate=1; }); // pas d'accéléré
+    v.addEventListener('seeking',function(){ seeking=true; });
+    v.addEventListener('seeked',function(){ last=v.currentTime; seeking=false; });
+    v.addEventListener('ratechange',function(){ if(v.playbackRate>2) v.playbackRate=2; }); // jusqu'à ×2
     v.addEventListener('ended',function(){ if(unlocked) unlock(true); });
     box.innerHTML=''; box.appendChild(v);
     var p=v.play(); if(p&&p.catch) p.catch(function(){}); // autoplay refusé : les contrôles restent là

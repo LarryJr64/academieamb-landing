@@ -175,7 +175,8 @@ textarea{min-height:100px;resize:vertical}
 .stack{display:grid;gap:14px}
 .soft{background:#fff;border:1.5px solid #F3E3E7;border-radius:var(--r);padding:30px;text-align:center}
 .soft h3{margin-bottom:10px}
-#cal{min-height:690px;margin-top:6px}
+#cal{height:720px;margin-top:6px} /* Calendly met son iframe à height:100% : il faut une hauteur fixe, sinon 150 px */
+#cal iframe{height:100%!important}
 .ok{text-align:center;padding:16px 4px}
 .ok .big{font-size:52px}
 .ok h3{margin:8px 0 12px}
@@ -629,7 +630,11 @@ function unlock(scroll,silent){
   if(seen) unlock(false,true); // déjà regardée sur ce navigateur : pas besoin de la revoir
 })();
 
-$$('[data-cta]').forEach(function(a){a.addEventListener('click',function(){trackC('CTAClick',{position:a.getAttribute('data-cta')})})});
+$$('[data-cta]').forEach(function(a){a.addEventListener('click',function(e){
+  trackC('CTAClick',{position:a.getAttribute('data-cta')});
+  // réservation encore verrouillée : on renvoie vers la vidéo et son compteur
+  if(!unlocked && a.getAttribute('href')==='#reserver'){ e.preventDefault(); $('#vbox').scrollIntoView({behavior:'smooth',block:'center'}); }
+})});
 
 /* ============ UTM → Calendly ============ */
 function getUtm(){
@@ -697,11 +702,18 @@ function e164(t){var d=String(t||'').replace(/[^\d+]/g,'');if(d.indexOf('+')===0
     s.onload=function(){
       var u=getUtm();
       /* L’ordre des réponses suit l’ordre des questions dans Calendly (voir le document de paramétrage) */
+      // Le widget actuel ignore l'option « prefill » : on passe les réponses dans l'URL (name, email, a1…a7), que Calendly lit.
+      var p={ hide_gdpr_banner:'1', primary_color:'b94a74', text_color:'241c1f', background_color:'ffffff',
+        name:val('prenom')+' '+val('nom'), email:val('email'),
+        // Questions de l'événement Calendly (relevées le 16/11) : a1 téléphone, a2 case « J'ai compris », a3 situation, a4 objectif.
+        // Calendly n'a pas de case pour le reste : on l'ajoute à la suite de l'objectif pour que Sarah l'ait.
+        a1:e164(val('tel')), a2:"J'ai compris", a3:val('situation'),
+        a4:val('objectifs')+' — Expérience : '+val('experience')+' · Ce qui manque : '+val('manque')+' · Démarrage : '+val('demarrer')+' · Me connaît : '+val('connais') };
+      // encodeURIComponent (espaces en %20) : avec URLSearchParams, les « + » ressortent tels quels dans Calendly
+      var q=Object.keys(p).map(function(k){ return k+'='+encodeURIComponent(p[k]); }).join('&');
       Calendly.initInlineWidget({
-        url: CFG.CALENDLY_URL+'?hide_gdpr_banner=1&primary_color=b94a74&text_color=241c1f&background_color=ffffff',
+        url: CFG.CALENDLY_URL+'?'+q,
         parentElement: $('#cal'),
-        prefill:{ name:val('prenom')+' '+val('nom'), email:val('email'),
-          customAnswers:{ a1:e164(val('tel')), a2:val('situation'), a3:val('objectifs'), a4:val('experience'), a5:val('manque'), a6:val('demarrer'), a7:val('connais') } },
         utm:{ utmSource:u.utm_source, utmMedium:u.utm_medium, utmCampaign:u.utm_campaign, utmContent:u.utm_content, utmTerm:u.utm_term }
       });
     };
